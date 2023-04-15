@@ -18,16 +18,9 @@ export async function POST(request: Request) {
     const emailToAdd = addFriendValidator.parse({ email });
 
     // check if email exists in redis
-    const RESTResponse = await fetch(`${process.env.UPSTASH_REDIS_REST_URL}/get/user:email:${emailToAdd.email}`, {
-      headers: {
-        Authorization: `Bearer ${process.env.UPSTASH_REDIS_REST_TOKEN}`,
-      },
-      cache: "no-store",
-    })
-    const data = await RESTResponse.json() as { result: string };
+    const idToAdd = await fetchRedisData('get', `user:email:${emailToAdd.email}`) as string;
+    console.log(idToAdd);
 
-    console.log(data);
-    const idToAdd = data.result
     // if email does not exist, return error
     if (!idToAdd)
       return new Response('E-mail does not exist', { status: 400 })
