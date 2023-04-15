@@ -28,7 +28,7 @@ const AddFriendButton: FC<AddFriendButtonProps> = ({ }) => {
     try {
       const validatedEmail = addFriendValidator.parse({ email });
       await axios.post('/api/friends/add', {
-        email: validatedEmail,
+        email: validatedEmail.email,
       });
       setShowSuccessState(true);
     } catch (e) {
@@ -36,11 +36,13 @@ const AddFriendButton: FC<AddFriendButtonProps> = ({ }) => {
         setError('email', {
           message: e.message
         })
+        return;
       }
       if (e instanceof AxiosError) {
         setError('email', {
-          message: e.response?.data?.message
+          message: e.response?.data
         })
+        return;
       }
       setError('email', {
         message: 'Something went wrong'
