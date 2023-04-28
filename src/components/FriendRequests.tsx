@@ -72,7 +72,12 @@ const FriendRequests: FC<FriendRequestsProps> = ({ incomingFriendRequests }) => 
               >
                 <Check className='text-white font-semibold w-3/4 h-3/4' />
               </button>
-              <button type="button" aria-label='deny friend request' className='w-8 h-8 bg-red-600 hover:bg-red-700 flex items-center justify-center rounded-full transition hover:shadow-md'>
+              <button 
+              type="button" 
+              aria-label='deny friend request' 
+              className='w-8 h-8 bg-red-600 hover:bg-red-700 flex items-center justify-center rounded-full transition hover:shadow-md'
+              onClick={() => denyFriendHandler(request.senderId)}
+              >
                 <X className='text-white font-semibold w-3/4 h-3/4' />
               </button>
             </div>
