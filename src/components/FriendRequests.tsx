@@ -1,7 +1,10 @@
 'use client'
-import { Check, UserPlus, X } from 'lucide-react'
-import Image from 'next/image'
 import { FC, useState } from 'react'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import axios, { AxiosError } from 'axios'
+import { Check, UserPlus, X } from 'lucide-react'
+import { toast } from 'react-hot-toast'
 
 interface FriendRequestsProps {
   incomingFriendRequests: IncomingFriendRequests[]
@@ -9,10 +12,42 @@ interface FriendRequestsProps {
 }
 
 const FriendRequests: FC<FriendRequestsProps> = ({ incomingFriendRequests }) => {
+  const router = useRouter();
   const [friendRequests, setFriendRequests] =
     useState<IncomingFriendRequests[]>(
       incomingFriendRequests
     )
+  const acceptFriendHandler = async (senderId: string) => {
+    try {
+      const req = await axios.post('/api/friends/accept', { id: senderId });
+
+      setFriendRequests((prev) => prev.filter((request) => request.senderId !== senderId));
+
+      toast.success('Friend request accepted');
+      // router.refresh()
+    } catch (e) {
+      let errorMessage = 'Something went wrong';
+      if (e instanceof AxiosError)
+        errorMessage = e.response?.data;
+      toast.error(errorMessage);
+    }
+  }
+
+  const denyFriendHandler = async (senderId: string) => {
+    try {
+      const req = await axios.post('/api/friends/deny', { id: senderId });
+
+      setFriendRequests((prev) => prev.filter((request) => request.senderId !== senderId));
+
+      toast.success('Friend request denied');
+      router.refresh();
+    } catch (e) {
+      let errorMessage = 'Something went wrong';
+      if (e instanceof AxiosError)
+        errorMessage = e.response?.data;
+      toast.error(errorMessage);
+    }
+  }
   return <>
     {
       friendRequests.length === 0 ? (
