@@ -62,11 +62,14 @@ const FriendRequests: FC<FriendRequestsProps> = ({ incomingFriendRequests }) => 
               height={40}
               className='rounded-full'
             />
-
-
             <p className='text-lg font-medium'>{request.senderEmail}</p>
             <div className="flex-1 ml-auto flex items-center justify-end gap-4 ">
-              <button type="button" aria-label='accept friend request' className='w-8 h-8 bg-indigo-600 hover:bg-indigo-700 flex items-center justify-center rounded-full transition hover:shadow-md'>
+              <button
+                type="button"
+                aria-label='accept friend request'
+                className='w-8 h-8 bg-indigo-600 hover:bg-indigo-700 flex items-center justify-center rounded-full transition hover:shadow-md'
+                onClick={() => acceptFriendHandler(request.senderId)}
+              >
                 <Check className='text-white font-semibold w-3/4 h-3/4' />
               </button>
               <button type="button" aria-label='deny friend request' className='w-8 h-8 bg-red-600 hover:bg-red-700 flex items-center justify-center rounded-full transition hover:shadow-md'>
