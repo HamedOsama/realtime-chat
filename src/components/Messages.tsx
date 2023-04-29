@@ -3,6 +3,7 @@
 import { FC, useRef, useState } from 'react'
 import { Message } from '@/lib/Validations/message'
 import { cn } from '@/lib/utils'
+import { format } from 'date-fns'
 
 interface MessagesProps {
   initialMessages: Message[]
@@ -10,9 +11,14 @@ interface MessagesProps {
 }
 
 const Messages: FC<MessagesProps> = ({ initialMessages, userId }) => {
+
   const scrollDownRef = useRef<HTMLDivElement | null>(null)
 
   const [messages, setMessages] = useState<Message[]>(initialMessages)
+
+  const formatTimestamp = (timestamp: number) => {
+    return format(timestamp, 'HH:mm')
+  }
   return <div className='flex flex-1 h-full flex-col-reverse gap-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-tracker-blue-lighter scrollbar-w-2 scrolling-touch'>
     <div ref={scrollDownRef} />
     {
@@ -36,7 +42,7 @@ const Messages: FC<MessagesProps> = ({ initialMessages, userId }) => {
                   'rounded-br-none': !hasNextMessage && isCurrentUser,
                   'rounded-bl-none': !hasNextMessage && !isCurrentUser,
                 })}>{message.text}{' '}
-                <span className='ml-2 text-xs text-gray-400'>{message.timestamp}</span>
+                  <span className='ml-2 text-xs text-gray-400'>{formatTimestamp(message.timestamp)}</span>
                 </span>
               </div>
             </div>
