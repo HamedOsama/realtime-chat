@@ -1,3 +1,5 @@
+import ChatInput from '@/components/ChatInput'
+import Messages from '@/components/Messages'
 import { fetchRedisData } from '@/helpers/redis'
 import { messageArrayValidator } from '@/lib/Validations/message'
 import { authOptions } from '@/lib/auth'
@@ -13,7 +15,7 @@ interface pageProps {
   }
 }
 
-async function getChatMessage(chatId: string) {
+async function getChatMessages(chatId: string) {
   try {
     const results: string[] = await fetchRedisData(
       'zrange',
@@ -50,7 +52,7 @@ const page = async ({ params }: pageProps) => {
 
   const chatPartner = (await (db.get(`user:${chatPartnerId}`) as Promise<User>)) as User;
 
-  const initialMessage = await getChatMessage(chatId);
+  const initialMessages = await getChatMessages(chatId);
   return <div className='flex-1 justify-between flex flex-col h-full max-h-[calc(100vh-6rem)]'>
     <div className="flex sm:items-center justify-between py-3 border-b-2 border-gray-200">
       <div className="relative flex items-center space-x-4">
@@ -74,7 +76,8 @@ const page = async ({ params }: pageProps) => {
         </div>
       </div>
     </div>
-
+      <Messages initialMessages={initialMessages} userId={session.user.id} />
+      <ChatInput chatPartner={chatPartner} chatId={chatId} />
   </div>
 }
 
