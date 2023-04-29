@@ -1,4 +1,5 @@
 "use client"
+import { chatHrefConstructor } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -23,7 +24,7 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends, userId }) => {
     {friends.sort().map((friend) => {
       return (
         <li key={friend.id}>
-          <Link href={`/dashboard/chat/${userId}--${friend.id}`} className='flex items-center px-2 py-2 rounded-md hover:bg-gray-50 text-gray-700 hover:text-indigo-600'>
+          <Link href={`/dashboard/chat/${chatHrefConstructor(userId, friend.id)}`} className='flex items-center px-2 py-2 rounded-md hover:bg-gray-50 text-gray-700 hover:text-indigo-600'>
             <div className='flex-shrink-0'>
               <Image
                 className='h-8 w-8 rounded-full'
@@ -43,14 +44,14 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends, userId }) => {
                     {friend ? 'Online' : 'Offline'}
                   </span>
                 </div> */}
-                
+
                 <div className=""></div>
               </div>
               {/* <div className='mt-1 flex items-center'> */}
-                {/* <div className='flex-shrink-0'>
+              {/* <div className='flex-shrink-0'>
                   <span className='inline-flex items-center justify-center h-2 w-2 rounded-full bg-green-400' />
                 </div> */}
-                {/* <div className='ml-2 flex-1 text-sm truncate'>
+              {/* <div className='ml-2 flex-1 text-sm truncate'>
                   {unseenMessages.filter((message) => message.senderId === friend.id).length > 0 && (
                     <span className='font-semibold text-indigo-600'>New message</span>
                   )}
