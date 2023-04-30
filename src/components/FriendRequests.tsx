@@ -23,8 +23,12 @@ const FriendRequests: FC<FriendRequestsProps> = ({ incomingFriendRequests, sessi
   useEffect(() => {
     pusherClient.subscribe(toPusherKey(`user:${sessionId}:incoming_friend_requests`))
 
-    const friendRequestHandler = () => {
-      console.log('friend request received')
+    const friendRequestHandler = (data: IncomingFriendRequests) => {
+      setFriendRequests((prev) => [...prev, {
+        senderId: data.senderId,
+        senderEmail: data.senderEmail,
+        senderImage: data.senderImage,
+      }])
     }
     pusherClient.bind('incoming_friend_requests', friendRequestHandler)
 
@@ -64,6 +68,7 @@ const FriendRequests: FC<FriendRequestsProps> = ({ incomingFriendRequests, sessi
       toast.error(errorMessage);
     }
   }
+  console.log(friendRequests)
   return <>
     {
       friendRequests.length === 0 ? (
