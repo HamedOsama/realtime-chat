@@ -47,7 +47,7 @@ export async function POST(request: Request) {
       {
         senderId: session.user.id,
         senderEmail: session.user.email,
-        sendImage : session.user.image,
+        senderImage : session.user.image,
       }
     )
     // add friend request to redis
