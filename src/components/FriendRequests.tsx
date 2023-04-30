@@ -1,22 +1,38 @@
 'use client'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import axios, { AxiosError } from 'axios'
 import { Check, UserPlus, X } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { pusherClient } from '@/lib/pusher'
+import { toPusherKey } from '@/lib/utils'
 
 interface FriendRequestsProps {
   incomingFriendRequests: IncomingFriendRequests[]
   sessionId: string
 }
 
-const FriendRequests: FC<FriendRequestsProps> = ({ incomingFriendRequests }) => {
+const FriendRequests: FC<FriendRequestsProps> = ({ incomingFriendRequests, sessionId }) => {
   const router = useRouter();
   const [friendRequests, setFriendRequests] =
     useState<IncomingFriendRequests[]>(
       incomingFriendRequests
     )
+
+  useEffect(() => {
+    pusherClient.subscribe(toPusherKey(`user:${sessionId}:incoming_friend_requests`))
+
+    const friendRequestHandler = () => {
+      console.log('friend request received')
+    }
+    pusherClient.bind('incoming_friend_requests', friendRequestHandler)
+
+    return () => {
+      pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:incoming_friend_requests`))
+      pusherClient.unbind('incoming_friend_requests', friendRequestHandler)
+    }
+  }, [])
   const acceptFriendHandler = async (senderId: string) => {
     try {
       const req = await axios.post('/api/friends/accept', { id: senderId });
@@ -72,11 +88,11 @@ const FriendRequests: FC<FriendRequestsProps> = ({ incomingFriendRequests }) => 
               >
                 <Check className='text-white font-semibold w-3/4 h-3/4' />
               </button>
-              <button 
-              type="button" 
-              aria-label='deny friend request' 
-              className='w-8 h-8 bg-red-600 hover:bg-red-700 flex items-center justify-center rounded-full transition hover:shadow-md'
-              onClick={() => denyFriendHandler(request.senderId)}
+              <button
+                type="button"
+                aria-label='deny friend request'
+                className='w-8 h-8 bg-red-600 hover:bg-red-700 flex items-center justify-center rounded-full transition hover:shadow-md'
+                onClick={() => denyFriendHandler(request.senderId)}
               >
                 <X className='text-white font-semibold w-3/4 h-3/4' />
               </button>
