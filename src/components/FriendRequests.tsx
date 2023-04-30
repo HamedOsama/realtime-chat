@@ -68,7 +68,6 @@ const FriendRequests: FC<FriendRequestsProps> = ({ incomingFriendRequests, sessi
       toast.error(errorMessage);
     }
   }
-  console.log(friendRequests)
   return <>
     {
       friendRequests.length === 0 ? (
