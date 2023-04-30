@@ -1,8 +1,9 @@
 "use client"
-import { chatHrefConstructor } from '@/lib/utils';
+import { pusherClient } from '@/lib/pusher';
+import { chatHrefConstructor, toPusherKey } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { FC, useEffect, useState } from 'react'
 
 interface SidebarChatListProps {
@@ -10,7 +11,13 @@ interface SidebarChatListProps {
   userId: string
 }
 
+interface ExtendedMessage extends Message {
+  senderEmail: string
+  senderName: string
+  senderImage: string
+}
 const SidebarChatList: FC<SidebarChatListProps> = ({ friends, userId }) => {
+  const router = useRouter()
   const pathname = usePathname()
   const [unseenMessages, setUnseenMessages] = useState<Message[]>([]);
 
@@ -19,6 +26,30 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends, userId }) => {
       setUnseenMessages(prev => prev.filter((message) => !pathname.includes(message.senderId)))
     }
   }, [pathname])
+
+  useEffect(() => {
+    pusherClient.subscribe(toPusherKey(`user:${userId}:chats`))
+
+    pusherClient.subscribe(toPusherKey(`user:${userId}:friends`))
+
+    const newFriendHandler = () => {
+      router.refresh()
+    }
+    const newMessageHandler = (data: ExtendedMessage) => {
+      const notify = pathname !== `/dashboard/chat/${chatHrefConstructor(userId, data.senderId)}`
+      if (!notify) return ;
+
+      if(notify){
+        
+      }
+    }
+      pusherClient.bind('new_message', newMessageHandler)
+      pusherClient.bind('new_friend', newFriendHandler)
+      return () => {
+        pusherClient.unsubscribe(toPusherKey(`user:${userId}:chats`))
+        pusherClient.unsubscribe(toPusherKey(`user:${userId}:friends`))
+      }
+    }, [])
 
   return <ul role='list' className='max-h-[25rem] overflow-y-auto -mx-2 space-y-1'>
     {friends.sort().map((friend) => {

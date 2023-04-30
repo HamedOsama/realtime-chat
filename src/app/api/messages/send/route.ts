@@ -56,6 +56,17 @@ export async function POST(request: Request) {
         ...message,
       }
     )
+    // notify user that he has new message
+    pusherServer.trigger(
+      `user:${chatPartner}:chats`,
+      'new-message',
+      {
+        ...message,
+        senderEmail: currentUserData.email,
+        senderImage: currentUserData.image,
+        senderName: currentUserData.name
+      }
+    )
     // add message to redis
     await db.zadd(`chat:${chatId}:messages`, {
       score: timestamp,

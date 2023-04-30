@@ -74,9 +74,9 @@ const layout = async ({ children }: layoutProps) => {
                   </li>
                 )
               })}
-          <li>
-            <FriendRequestSidebar sessionId={session.user.id} initialUnseenRequestsCount={unseenRequestsCount} />
-          </li>
+              <li>
+                <FriendRequestSidebar sessionId={session.user.id} initialUnseenRequestsCount={unseenRequestsCount} />
+              </li>
             </ul>
           </li>
           <li className='-mx-6 mt-auto flex items-center'>
@@ -102,7 +102,9 @@ const layout = async ({ children }: layoutProps) => {
       </nav>
     </div>
 
-    {children}
+    <aside>
+      {children}
+    </aside>
   </div>
 }
 
