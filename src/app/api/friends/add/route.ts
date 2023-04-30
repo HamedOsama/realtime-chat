@@ -21,7 +21,7 @@ export async function POST(request: Request) {
 
     // check if email exists in redis
     const idToAdd = await fetchRedisData('get', `user:email:${emailToAdd.email}`) as string;
-    console.log(idToAdd);
+    console.log(session);
 
     // if email does not exist, return error
     if (!idToAdd)
