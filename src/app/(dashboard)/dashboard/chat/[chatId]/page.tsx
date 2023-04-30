@@ -53,6 +53,7 @@ const page = async ({ params }: pageProps) => {
   const chatPartner = (await (db.get(`user:${chatPartnerId}`) as Promise<User>)) as User;
 
   const initialMessages = await getChatMessages(chatId);
+  console.log(session.user.email)
   return <div className='flex-1 justify-between flex flex-col h-full max-h-[calc(100vh-6rem)]'>
     <div className="flex sm:items-center justify-between py-3 border-b-2 border-gray-200">
       <div className="relative flex items-center space-x-4">

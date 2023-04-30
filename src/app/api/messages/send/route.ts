@@ -1,7 +1,9 @@
 import { fetchRedisData } from "@/helpers/redis";
-import { Message, messageArrayValidator } from "@/lib/Validations/message";
+import { Message, messageSchema } from "@/lib/Validations/message";
 import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
+import { pusherServer } from "@/lib/pusher";
+import { toPusherKey } from "@/lib/utils";
 import { nanoid } from "nanoid";
 import { getServerSession } from "next-auth";
 import { z } from "zod";
@@ -43,19 +45,28 @@ export async function POST(request: Request) {
       timestamp,
       senderId: currentUser,
     }
+    // validate message
+    const message = messageSchema.parse(messageData);
 
-    messageArrayValidator.parse([messageData]);
-
+    // notify all users in chat
+    pusherServer.trigger(
+      toPusherKey(`chat:${chatId}`),
+      'incoming-message',
+      {
+        ...message,
+      }
+    )
+    // add message to redis
     await db.zadd(`chat:${chatId}:messages`, {
       score: timestamp,
-      member: JSON.stringify(messageData)
+      member: JSON.stringify(message)
     });
 
     return new Response('Message sent successfully', { status: 200 });
   } catch (e) {
     if (e instanceof z.ZodError)
       return new Response('Invalid request payload', { status: 422 });
-    if(e instanceof Error)
+    if (e instanceof Error)
       return new Response(e.message, { status: 500 });
     return new Response('Invalid Request', { status: 500 });
   }
