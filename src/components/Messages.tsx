@@ -4,13 +4,16 @@ import { FC, useRef, useState } from 'react'
 import { Message } from '@/lib/Validations/message'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
+import Image from 'next/image'
+import { Session } from 'next-auth'
 
 interface MessagesProps {
   initialMessages: Message[]
-  userId: string
+  session: Session
+  chatPartner: User
 }
 
-const Messages: FC<MessagesProps> = ({ initialMessages, userId }) => {
+const Messages: FC<MessagesProps> = ({ initialMessages, session, chatPartner }) => {
 
   const scrollDownRef = useRef<HTMLDivElement | null>(null)
 
@@ -23,7 +26,7 @@ const Messages: FC<MessagesProps> = ({ initialMessages, userId }) => {
     <div ref={scrollDownRef} />
     {
       messages.map((message, index) => {
-        const isCurrentUser = message.senderId === userId
+        const isCurrentUser = message.senderId === session.user.id
 
         const hasNextMessage = messages[index - 1]?.senderId === messages[index].senderId
 
@@ -44,6 +47,19 @@ const Messages: FC<MessagesProps> = ({ initialMessages, userId }) => {
                 })}>{message.text}{' '}
                   <span className='ml-2 text-xs text-gray-400'>{formatTimestamp(message.timestamp)}</span>
                 </span>
+              </div>
+              <div className={cn('relative w-6 h-6', {
+                'order-2': isCurrentUser,
+                'order-1': !isCurrentUser,
+                'invisible': hasNextMessage,
+              })}>
+                <Image
+                  src={isCurrentUser ? (session.user.image as string) : chatPartner.image}
+                  alt={`${isCurrentUser ? session.user.name : chatPartner.name}'s profile picture}`}
+                  fill
+                  referrerPolicy='no-referrer'
+                  className='rounded-full'
+                />
               </div>
             </div>
           </div>
