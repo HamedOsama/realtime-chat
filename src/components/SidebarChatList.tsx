@@ -68,6 +68,8 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends, userId }) => {
 
   return <ul role='list' className='max-h-[25rem] overflow-y-auto -mx-2 space-y-1'>
     {friends.sort().map((friend) => {
+      const messagesCount = unseenMessages.reduce((acc, message) => message.senderId === friend.id ? acc + 1 : acc, 0)
+
       return (
         <li key={friend.id}>
           <Link href={`/dashboard/chat/${chatHrefConstructor(userId, friend.id)}`} className='flex items-center px-2 py-2 rounded-md hover:bg-gray-50 text-gray-700 hover:text-indigo-600'>
@@ -90,8 +92,11 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends, userId }) => {
                     {friend ? 'Online' : 'Offline'}
                   </span>
                 </div> */}
-
-                <div className=""></div>
+                <div className="text-white bg-indigo-600 text-sm flex items-center justify-center w-4 h-4 rounded-full">
+                  <span className="inline-block">{
+                    messagesCount
+                  }</span>
+                </div>
               </div>
               {/* <div className='mt-1 flex items-center'> */}
               {/* <div className='flex-shrink-0'>
