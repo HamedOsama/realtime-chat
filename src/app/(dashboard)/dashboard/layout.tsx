@@ -102,7 +102,7 @@ const layout = async ({ children }: layoutProps) => {
       </nav>
     </div>
 
-    <aside>
+    <aside className='w-full flex-1 h-full'>
       {children}
     </aside>
   </div>

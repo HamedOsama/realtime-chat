@@ -58,8 +58,8 @@ export async function POST(request: Request) {
     )
     // notify user that he has new message
     pusherServer.trigger(
-      `user:${chatPartner}:chats`,
-      'new-message',
+      toPusherKey(`user:${chatPartner}:chats`),
+      'new_message',
       {
         ...message,
         senderEmail: currentUserData.email,
