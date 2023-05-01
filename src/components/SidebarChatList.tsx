@@ -92,8 +92,8 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends, userId }) => {
                     {friend ? 'Online' : 'Offline'}
                   </span>
                 </div> */}
-                <div className="text-white bg-indigo-600 text-sm flex items-center justify-center w-4 h-4 rounded-full">
-                  <span className="inline-block">{
+                <div className="ml-1 bg-indigo-600 font-medium text-xs text-white w-4 h-4 rounded-full flex justify-center items-center">
+                  <span className="inline-block text-center">{
                     messagesCount
                   }</span>
                 </div>
